@@ -13,6 +13,7 @@ import AIChatPanel from '../components/AIChatPanel'
 import GlassCard from '../components/GlassCard'
 import MouseGlow from '../components/MouseGlow'
 import { SkeletonCard, SkeletonTableRow } from '../components/SkeletonLoader'
+import { API_BASE_URL } from '../config/api'
 
 export default function Dashboard() {
   const [projects, setProjects] = useState<any[]>([])
@@ -50,8 +51,8 @@ export default function Dashboard() {
       const config = { headers: { Authorization: `Bearer ${token}` } }
       
       const [projRes, statsRes] = await Promise.all([
-        axios.get('http://localhost:8000/api/v1/projects', config),
-        axios.get('http://localhost:8000/api/v1/projects/stats', config)
+        axios.get(`${API_BASE_URL}/api/v1/projects`, config),
+        axios.get(`${API_BASE_URL}/api/v1/projects/stats`, config)
       ])
       
       setProjects(projRes.data)
@@ -72,7 +73,7 @@ export default function Dashboard() {
     
     try {
       if (uploadMode === 'git') {
-        const res = await axios.post('http://localhost:8000/api/v1/projects/import-git', {
+        const res = await axios.post(`${API_BASE_URL}/api/v1/projects/import-git`, {
           name: projectName,
           description: projectDesc,
           git_url: gitUrl
@@ -92,7 +93,7 @@ export default function Dashboard() {
         if (projectDesc) formData.append('description', projectDesc)
         formData.append('file', zipFile)
 
-        const res = await axios.post('http://localhost:8000/api/v1/projects/upload', formData, {
+        const res = await axios.post(`${API_BASE_URL}/api/v1/projects/upload`, formData, {
           headers: {
             Authorization: `Bearer ${token}`,
             'Content-Type': 'multipart/form-data'
@@ -116,7 +117,7 @@ export default function Dashboard() {
     
     try {
       const token = localStorage.getItem('token')
-      await axios.delete(`http://localhost:8000/api/v1/projects/${id}`, {
+      await axios.delete(`${API_BASE_URL}/api/v1/projects/${id}`, {
         headers: { Authorization: `Bearer ${token}` }
       })
       toast.success('Project workspace removed.')

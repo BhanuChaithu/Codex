@@ -13,6 +13,7 @@ import Navbar from '../components/Navbar'
 import AIChatPanel from '../components/AIChatPanel'
 import GlassCard from '../components/GlassCard'
 import MouseGlow from '../components/MouseGlow'
+import { API_BASE_URL, WS_BASE_URL } from '../config/api'
 
 export default function ProjectAnalysis() {
   const { projectId } = useParams()
@@ -74,7 +75,7 @@ export default function ProjectAnalysis() {
       const token = localStorage.getItem('token')
       const config = { headers: { Authorization: `Bearer ${token}` } }
       
-      const projRes = await axios.get(`http://localhost:8000/api/v1/projects/${projectId}`, config)
+      const projRes = await axios.get(`${API_BASE_URL}/api/v1/projects/${projectId}`, config)
       setProject(projRes.data)
       
       if (projRes.data.status === 'completed') {
@@ -101,7 +102,7 @@ export default function ProjectAnalysis() {
         })
       }
       
-      const logsRes = await axios.get(`http://localhost:8000/api/v1/agents/logs/${projectId}`, config)
+      const logsRes = await axios.get(`${API_BASE_URL}/api/v1/agents/logs/${projectId}`, config)
       setLogs(logsRes.data)
     } catch (err) {
       console.error(err)
@@ -114,8 +115,8 @@ export default function ProjectAnalysis() {
       const config = { headers: { Authorization: `Bearer ${token}` } }
       
       const [issuesRes, reportRes] = await Promise.all([
-        axios.get(`http://localhost:8000/api/v1/issues/project/${projectId}`, config),
-        axios.get(`http://localhost:8000/api/v1/reports/project/${projectId}`, config)
+        axios.get(`${API_BASE_URL}/api/v1/issues/project/${projectId}`, config),
+        axios.get(`${API_BASE_URL}/api/v1/reports/project/${projectId}`, config)
       ])
       
       setIssues(issuesRes.data)
@@ -126,7 +127,7 @@ export default function ProjectAnalysis() {
   }
 
   const setupWebSocket = () => {
-    const ws = new WebSocket(`ws://localhost:8000/api/v1/agents/ws/${projectId}`)
+    const ws = new WebSocket(`${WS_BASE_URL}/api/v1/agents/ws/${projectId}`)
     wsRef.current = ws
     
     ws.onmessage = (event) => {
@@ -151,7 +152,7 @@ export default function ProjectAnalysis() {
     setApplyingFixId(fixId)
     try {
       const token = localStorage.getItem('token')
-      const res = await axios.post(`http://localhost:8000/api/v1/issues/fix/${fixId}/apply`, {}, {
+      const res = await axios.post(`${API_BASE_URL}/api/v1/issues/fix/${fixId}/apply`, {}, {
         headers: { Authorization: `Bearer ${token}` }
       })
       toast.success(res.data.message || 'Code patch successfully applied!')
@@ -166,7 +167,7 @@ export default function ProjectAnalysis() {
   const handleDownloadReport = async (format: string) => {
     try {
       const token = localStorage.getItem('token')
-      const res = await axios.get(`http://localhost:8000/api/v1/reports/project/${projectId}/download/${format}`, {
+      const res = await axios.get(`${API_BASE_URL}/api/v1/reports/project/${projectId}/download/${format}`, {
         headers: { Authorization: `Bearer ${token}` },
         responseType: 'blob'
       })

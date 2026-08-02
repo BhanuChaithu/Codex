@@ -9,6 +9,8 @@ import {
 } from 'lucide-react'
 import MouseGlow from '../components/MouseGlow'
 
+import { API_BASE_URL } from '../config/api'
+
 export default function Register() {
   const [fullName, setFullName] = useState('')
   const [email, setEmail] = useState('')
@@ -22,13 +24,13 @@ export default function Register() {
     setLoading(true)
 
     try {
-      await axios.post('http://localhost:8000/api/v1/auth/register', {
+      await axios.post(`${API_BASE_URL}/api/v1/auth/register`, {
         full_name: fullName,
         email,
         password
       })
 
-      const loginRes = await axios.post('http://localhost:8000/api/v1/auth/login', {
+      const loginRes = await axios.post(`${API_BASE_URL}/api/v1/auth/login`, {
         email,
         password
       })
